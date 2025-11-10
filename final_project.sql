@@ -145,7 +145,7 @@ CREATE TABLE Sighting_Details (
 );
 
 -- -------------------------------------------------------
--- 2. DML (INSERT STATEMENTS - Sample Data)
+-- 2. DML (INSERT STATEMENTS)
 -- -------------------------------------------------------
 
 -- Species
@@ -468,3 +468,64 @@ WHERE
         WHERE Threat_Level = 'High'
     )
     AND raankOfRanger = 'Senior Ranger';
+    
+-- user privileges
+
+CREATE USER 'tanisha'@'localhost' IDENTIFIED BY 'tanisha';
+
+SHOW GRANTS FOR 'tanisha'@'localhost';
+GRANT SELECT ON wildlife_conservation.* TO 'tanisha'@'localhost';
+FLUSH PRIVILEGES;
+
+GRANT EXECUTE ON FUNCTION wildlife_conservation.age_of_animal TO 'tanisha'@'localhost';
+GRANT EXECUTE ON FUNCTION wildlife_conservation.ranger_experience TO 'tanisha'@'localhost';
+FLUSH PRIVILEGES;
+
+
+
+USE wildlife_conservation;
+
+CREATE USER 'bhoomika'@'localhost' IDENTIFIED BY 'bhoomika';
+
+
+GRANT SELECT ON wildlife_conservation.* TO 'bhoomika'@'localhost';
+
+
+GRANT EXECUTE ON FUNCTION wildlife_conservation.age_of_animal TO 'bhoomika'@'localhost';
+GRANT EXECUTE ON FUNCTION wildlife_conservation.ranger_experience TO 'bhoomika'@'localhost';
+GRANT EXECUTE ON FUNCTION wildlife_conservation.threat_severity_score TO 'bhoomika'@'localhost';
+
+
+FLUSH PRIVILEGES;
+
+SELECT '*** Bhoomika User Created and Privileges Granted ***' AS Status;
+SHOW GRANTS FOR 'bhoomika'@'localhost';
+
+-- users
+
+
+
+CREATE USER IF NOT EXISTS 'app_employee'@'localhost' IDENTIFIED BY 'employee123';
+
+-- Employee privileges: Can view data, add new records, and update existing records
+-- Cannot delete or modify database structure (except for Threat_Report which is vital for them)
+GRANT SELECT, INSERT, UPDATE ON wildlife_conservation.* TO 'app_employee'@'localhost';
+
+-- Explicitly remove DELETE permission on all tables for safety (optional but good practice)
+REVOKE DELETE ON wildlife_conservation.* FROM 'app_employee'@'localhost';
+
+
+CREATE USER IF NOT EXISTS 'app_supervisor'@'localhost' IDENTIFIED BY 'supervisor123';
+
+-- Supervisor privileges: Full CRUD (SELECT, INSERT, UPDATE, DELETE) on all data tables
+GRANT SELECT, INSERT, UPDATE, DELETE ON wildlife_conservation.* TO 'app_supervisor'@'localhost';
+
+-- Grant execution of stored routines needed for logging/updating
+GRANT EXECUTE ON wildlife_conservation.* TO 'app_supervisor'@'localhost';
+
+
+FLUSH PRIVILEGES;
+
+SELECT '*** Employee and Supervisor Users Created/Updated ***' AS Status;
+SHOW GRANTS FOR 'app_employee'@'localhost';
+SHOW GRANTS FOR 'app_supervisor'@'localhost';
